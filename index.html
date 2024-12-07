@@ -181,7 +181,7 @@ function fetchJSONData() {
     let olElem = document.getElementById("olElement");
     olElem.innerHTML = "";
 
-    fetch("./metadata.json")
+    fetch("./metadata.json?version=" + new Date().getTime())
         .then((res) => {
             if (!res.ok) {
                 throw new Error(`HTTP error! Status: ${res.status}`);
