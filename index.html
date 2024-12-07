@@ -24,14 +24,14 @@
                             <h4 class="text-white weight-700 text-28 font-park">monart.cards</h4>
                         </div>
                     </div>
-                    <div class="row  my-1">
+                    <div class="row ">
                         <div class="col-12 ">
                             <hr class="text-white"/>
                         </div>
                     </div>
-                    <div class="row my-3">
+                    <div class="row">
                         <div class="col-12">
-                            <h4 class="text-white weight-700 text-28 font-park">Connect</h4>
+                            <span class="text-white weight-700 text-28 font-park">Connect</span>
                         </div>
                     </div>
                     <div class="row my-2">
@@ -42,17 +42,17 @@
                         </div>
                     </div>
                         
-                    <!--For demonstration-->
+                    <!--For demonstration
                     <div class="row my-2">
                         <div class="col-12">
                             <span class="text-white weight-700 text-20 font-park mt-3">
                                 500 card remained out of 500
                             </span>
                         </div>
-                    </div>
+                    </div>-->
 
                     <!--Dynamic remain demonstratation-->
-                    <div class="row  my-2">
+                    <div class="row ">
                         <div class="col-12">
                             <div class="spinner-border spinner-border-sm text-white" id="loadSpinRemined" role="status">
                             </div>
@@ -174,36 +174,37 @@
 <script>
 let selectedItem = null;
 const modelViewer = document.getElementById("reveal");
-let allCardsData = []; 
+let allCardsData = [];
+let g_material = null;
 
 function fetchJSONData() {
-
     let olElem = document.getElementById("olElement");
     olElem.innerHTML = "";
-    
+
     fetch("./metadata.json")
         .then((res) => {
             if (!res.ok) {
-                throw new Error
-                    (`HTTP error! Status: ${res.status}`);
+                throw new Error(`HTTP error! Status: ${res.status}`);
             }
             return res.json();
         })
         .then((data) => {
-            allCardsData = data.cards; 
+            allCardsData = data.cards;
             populateList(allCardsData);
 
-            const uniqueUsers = getUniqueByUsers(data); 
+            const uniqueUsers = getUniqueByUsers(data);
             const dropdownMenu = document.getElementById('userDropdown');
+            dropdownMenu.innerHTML = ""; // Dropdown içeriğini temizle
 
+            // "All Designers" seçeneğini ekle
             const allDesignersItem = document.createElement("li");
             allDesignersItem.innerHTML = `<a class="dropdown-item" href="#">All Designers</a>`;
             allDesignersItem.addEventListener("click", () => {
-                populateList(allCardsData); 
-                //console.log("Showing all designers");
+                populateList(allCardsData);
             });
             dropdownMenu.appendChild(allDesignersItem);
 
+            // Kullanıcıları dropdown'a ekle
             uniqueUsers.forEach(user => {
                 const listItem = document.createElement('li');
                 listItem.innerHTML = `<a class="dropdown-item" href="#">${user}</a>`;
@@ -211,8 +212,7 @@ function fetchJSONData() {
                 dropdownMenu.appendChild(listItem);
             });
         })
-        .catch((error) =>
-            console.error("Unable to fetch data:", error));
+        .catch((error) => console.error("Unable to fetch data:", error));
 }
 
 
@@ -229,40 +229,61 @@ function getUniqueByUsers(jsonData) {
 
 function selectItem(item) {
     if (selectedItem) {
-        selectedItem.setAttribute("style","background-color: #2E073F !important;")
+        selectedItem.setAttribute("style", "background-color: #2E073F !important;");
     }
-    item.setAttribute("style","background-color: #8174A0 !important;")
-    selectedItem = item; 
+    item.setAttribute("style", "background-color: #8174A0 !important;");
+    selectedItem = item;
 }
 
-modelViewer.addEventListener('load', () => {
-    const model = modelViewer.model;
-    if (model) {
-        const materials = model.materials;
-        g_material = materials.find((mat) => mat.name === "frontside");
-        //console.log("model loaded successfully", g_material);
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    modelViewer.addEventListener('load', () => {
+        const model = modelViewer.model;
+        if (model) {
+            g_material = model.materials.find((mat) => mat.name === "frontside");
+            console.log("Model loaded and material assigned.");
+            // İlk kartı otomatik tıkla
+            const firstCard = document.getElementById("card0");
+            if (firstCard) {
+                firstCard.click();
+            }
+        }
+    });
+
+    fetchJSONData();
 });
 
-async function onItemSelected(card) {
-    const ipfsLink = "https://coffee-high-perch-467.mypinata.cloud/ipfs/" + card.img;
+async function onItemSelected(card, divSubElem1) {
+    // Spinner elementini oluştur
+    const spinner = document.createElement("div");
+    spinner.setAttribute("class", "spinner-border spinner-border-sm text-white");
+    spinner.setAttribute("role", "status");
 
-    const file = ipfsLink;
-    if (!g_material) {
-        console.error("Material not loaded yet!");
-        return;
-    }
+    divSubElem1.appendChild(spinner);
 
     try {
+        const ipfsLink = "https://coffee-high-perch-467.mypinata.cloud/ipfs/" + card.img;
+
+        if (!g_material) {
+            throw new Error("Material not loaded yet!");
+        }
+
         const newTexture = await modelViewer.createTexture(ipfsLink);
         g_material.pbrMetallicRoughness.baseColorTexture.setTexture(newTexture);
 
         g_material.pbrMetallicRoughness.roughnessFactor = 1.0;
-        g_material.pbrMetallicRoughness.metallicFactor = 0.0; 
+        g_material.pbrMetallicRoughness.metallicFactor = 0.0;
 
-       // console.log("texture applied successfully.");
+        console.log("Texture applied successfully!");
+
+        loadingText.innerText = "Texture applied successfully!";
     } catch (error) {
         console.error("Error loading texture:", error);
+        loadingText.innerText = "Error applying texture!";
+    } finally {
+        setTimeout(() => {
+            spinner.remove();
+            loadingText.remove();
+        }, 500);
     }
 }
 
@@ -299,7 +320,7 @@ function populateList(cards) {
         // Tıklama olayını ekle
         liElem.addEventListener("click", () => {
             selectItem(liElem);
-            onItemSelected(card);
+            onItemSelected(card, divSubElem1); // Tıklanan öğeyi gönderiyoruz
         });
     });
 }
@@ -310,6 +331,7 @@ function filterByUser(user) {
     populateList(filteredCards);
     console.log(`Filtered cards for user: ${user}`);
 }
+
 
 document.addEventListener('DOMContentLoaded', fetchJSONData);
 </script>
