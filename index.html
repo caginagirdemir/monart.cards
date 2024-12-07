@@ -275,14 +275,11 @@ async function onItemSelected(card, divSubElem1) {
 
         console.log("Texture applied successfully!");
 
-        loadingText.innerText = "Texture applied successfully!";
     } catch (error) {
         console.error("Error loading texture:", error);
-        loadingText.innerText = "Error applying texture!";
     } finally {
         setTimeout(() => {
             spinner.remove();
-            loadingText.remove();
         }, 500);
     }
 }
