@@ -1,5 +1,11 @@
 {
     "cards": [
-       
+        {
+            "name": "Card #1",
+            "byuser": "madirax",
+            "glb": "bafybeie5joibtzgzqej7hesjfgxhs2ctsfu36obui4abf5xhprszkdhfpe",
+            "img": "bafkreic7hbrsbv7u6cpccrtxwivnlrmcxybwjibzvr5fwqhosdbf4scnku",
+            "jsonfile": ""
+        }
     ]
 }
