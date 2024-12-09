@@ -91,6 +91,26 @@ body {
 .list-group {
     max-height: 100%;
     overflow-y: auto;
-    overflow-x: hidden; /* Prevent horizontal scroll if unnecessary */
-    height: 100vh; /* Optional: Adjust height based on your layout */
+    overflow-x: hidden; 
+    height: 100vh;
 }
+
+.list-group::-webkit-scrollbar {
+    width: 8px; 
+  }
+  
+  .list-group::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+  
+  .list-group::-webkit-scrollbar-thumb {
+    background-color: #ccc; 
+    border-radius: 10px; 
+    border: 2px solid transparent; 
+    background-clip: padding-box;
+  }
+  
+  .list-group::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa; 
+  }
