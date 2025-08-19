@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Backend token exchange response:', data);
+            // console.log('Backend token exchange response:', data);
             
             if (data.success && data.access_token) {
                 // Store access token
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function handleCallbackRedirect(callbackUrl) {
-        console.log('Callback redirect detected:', callbackUrl);
+        // console.log('Callback redirect detected:', callbackUrl);
         
         // Parse the callback URL to get parameters
         const url = new URL(callbackUrl);
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Backend user data response:', data);
+            // console.log('Backend user data response:', data);
             
             if (data.success && data.user) {
                 const userData = {
@@ -472,6 +472,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.head.appendChild(style);
 
     // Console welcome message
-    console.log('🎨 MonArt Cards - Welcome!');
-    console.log('Ready for modern and creative card designs.');
+    // console.log('🎨 MonArt Cards - Welcome!');
+    // console.log('Ready for modern and creative card designs.');
 });

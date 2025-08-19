@@ -194,7 +194,7 @@ html {
 
 /* Profile Overlay */
 .profile-overlay {
-    top: 35%;
+    top: 32%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
@@ -210,7 +210,7 @@ html {
     width: 120px !important;
     height: 120px !important;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: 0;
 }
 
 /* Profile Username */
@@ -223,7 +223,7 @@ html {
     padding: 4px 8px;
     border-radius: 12px;
     display: inline-block;
-    margin-top: 8px;
+    margin-top: 10px;
     max-width: 200px;
     word-wrap: break-word;
 }
