@@ -36,11 +36,27 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Check for OAuth completion
         const checkPopup = setInterval(() => {
-            if (popup.closed) {
-                clearInterval(checkPopup);
-                checkTwitterAuthResult();
+            try {
+                if (popup.closed) {
+                    clearInterval(checkPopup);
+                    checkTwitterAuthResult();
+                } else {
+                    // Check if popup has been redirected to callback
+                    try {
+                        if (popup.location.href.includes('monart.cards/callbacks')) {
+                            // Popup has been redirected, close it and handle callback
+                            popup.close();
+                            clearInterval(checkPopup);
+                            handleCallbackRedirect(popup.location.href);
+                        }
+                    } catch (e) {
+                        // Cross-origin error, popup is still on Twitter
+                    }
+                }
+            } catch (e) {
+                console.log('Popup check error:', e);
             }
-        }, 1000);
+        }, 500);
     }
     
     function buildTwitterAuthUrl(state) {
@@ -123,6 +139,30 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             fetchTwitterUserData();
         }, 1000);
+    }
+    
+    function handleCallbackRedirect(callbackUrl) {
+        console.log('Callback redirect detected:', callbackUrl);
+        
+        // Parse the callback URL to get parameters
+        const url = new URL(callbackUrl);
+        const code = url.searchParams.get('code');
+        const state = url.searchParams.get('state');
+        
+        if (code && state) {
+            // Verify state matches
+            const savedState = localStorage.getItem('twitter_oauth_state');
+            if (state === savedState) {
+                // Success - exchange code for token
+                exchangeCodeForToken(code);
+            } else {
+                showNotification('OAuth state doğrulanamadı. Güvenlik hatası.', 'danger');
+                resetTwitterButton();
+            }
+        } else {
+            showNotification('Twitter callback parametreleri bulunamadı.', 'danger');
+            resetTwitterButton();
+        }
     }
     
     function fetchTwitterUserData() {
