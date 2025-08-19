@@ -93,17 +93,54 @@ document.addEventListener('DOMContentLoaded', function() {
     // Removed checkTwitterAuthResult function - not needed for implicit flow
     
     function exchangeCodeForToken(code) {
-        // CORS issue prevents client-side token exchange
-        // For now, we'll simulate successful connection and use mock data
-        console.log('Authorization code received:', code);
-        console.log('Note: CORS prevents client-side token exchange');
+        // Use backend API for token exchange
+        const config = window.TWITTER_CONFIG;
+        const codeVerifier = localStorage.getItem('twitter_code_verifier');
         
-        showNotification('Your Twitter account has been successfully connected!', 'success');
+        console.log('Exchanging code for token via backend API...');
         
-        // Simulate getting user data (mock data for now)
-        setTimeout(() => {
-            fetchTwitterUserData();
-        }, 1000);
+        fetch(`${config.backendUrl}/twitter/token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                code: code,
+                code_verifier: codeVerifier
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Backend token exchange response:', data);
+            
+            if (data.success && data.access_token) {
+                // Store access token
+                localStorage.setItem('twitter_access_token', data.access_token);
+                showNotification('Your Twitter account has been successfully connected!', 'success');
+                
+                // Get user data with real access token
+                setTimeout(() => {
+                    fetchTwitterUserData();
+                }, 1000);
+            } else {
+                console.error('Backend token exchange failed:', data);
+                showNotification('Token exchange failed. Using mock data.', 'warning');
+                
+                // Fallback to mock data
+                setTimeout(() => {
+                    fetchTwitterUserData();
+                }, 1000);
+            }
+        })
+        .catch(error => {
+            console.error('Backend API error:', error);
+            showNotification('Backend API error. Using mock data.', 'warning');
+            
+            // Fallback to mock data
+            setTimeout(() => {
+                fetchTwitterUserData();
+            }, 1000);
+        });
     }
     
     function handleTwitterCallback(accessToken) {
@@ -151,8 +188,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const accessToken = localStorage.getItem('twitter_access_token');
         
         if (accessToken) {
-            // Make real Twitter API call
-            fetchTwitterUserFromAPI(accessToken);
+            // Use backend API to get user data
+            fetchTwitterUserFromBackend(accessToken);
         } else {
             // Fallback to mock data if no access token
             setTimeout(() => {
@@ -165,6 +202,54 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateTwitterProfile(mockUserData);
             }, 1500);
         }
+    }
+    
+    function fetchTwitterUserFromBackend(accessToken) {
+        // Use backend API to get Twitter user data
+        const config = window.TWITTER_CONFIG;
+        
+        fetch(`${config.backendUrl}/twitter/user`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'access_token': accessToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Backend user data response:', data);
+            
+            if (data.success && data.user) {
+                const userData = {
+                    username: `@${data.user.username}`,
+                    profileImage: data.user.profile_image_url,
+                    displayName: data.user.name
+                };
+                
+                updateTwitterProfile(userData);
+            } else {
+                console.error('Backend user data failed:', data);
+                // Fallback to mock data
+                const mockUserData = {
+                    username: '@monart_cards',
+                    profileImage: 'https://picsum.photos/150/150?random=1',
+                    displayName: 'MonArt Cards'
+                };
+                
+                updateTwitterProfile(mockUserData);
+            }
+        })
+        .catch(error => {
+            console.error('Backend user data error:', error);
+            // Fallback to mock data
+            const mockUserData = {
+                username: '@monart_cards',
+                profileImage: 'https://picsum.photos/150/150?random=1',
+                displayName: 'MonArt Cards'
+            };
+            
+            updateTwitterProfile(mockUserData);
+        });
     }
     
     function fetchTwitterUserFromAPI(accessToken) {
