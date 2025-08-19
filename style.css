@@ -3,11 +3,15 @@ body {
     background-color: #000000;
     color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-image: url('backdrop.png'), url('gridlines.png');
-    background-repeat: no-repeat, repeat;
-    background-position: top center, top left;
-    background-size: 100% auto, auto;
-    background-attachment: scroll, scroll;
+    background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+        url('backdrop.png'),
+        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+        url('gridlines.png');
+    background-repeat: no-repeat, no-repeat, repeat, repeat;
+    background-position: top center, top center, top left, top left;
+    background-size: 100% auto, 100% auto, auto, auto;
+    background-attachment: scroll, scroll, scroll, scroll;
     min-height: 100vh;
 }
 
@@ -203,7 +207,7 @@ html {
         0 0 30px rgba(255, 105, 180, 0.6),
         0 0 60px rgba(255, 105, 180, 0.4),
         0 0 90px rgba(255, 105, 180, 0.2),
-        0 10px 30px rgba(255, 105, 180, 0.3);
+        0 0 120px rgba(255, 105, 180, 0.1);
 }
 
 .card-header-placeholder {
@@ -320,6 +324,14 @@ html {
     border-radius: 50%;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
+}
+
+/* Logo Image */
+.logo-image {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    margin-bottom: 20px;
 }
 
 /* Custom scrollbar */
