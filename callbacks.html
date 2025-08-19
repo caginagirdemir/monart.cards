@@ -18,10 +18,10 @@
                 <div class="card bg-dark text-white mx-auto" style="max-width: 400px;">
                     <div class="card-body text-center">
                         <div class="spinner-border text-primary mb-3" role="status">
-                            <span class="visually-hidden">Yükleniyor...</span>
+                            <span class="visually-hidden">Loading...</span>
                         </div>
-                        <h5 class="card-title">Twitter Bağlantısı</h5>
-                        <p class="card-text">Hesabınız bağlanıyor...</p>
+                        <h5 class="card-title">Twitter Connection</h5>
+                        <p class="card-text">Connecting your account...</p>
                         <div id="statusMessage"></div>
                     </div>
                 </div>
@@ -49,9 +49,9 @@
                 statusMessage.innerHTML = `
                     <div class="alert alert-danger mt-3">
                         <i class="bi bi-exclamation-triangle"></i>
-                        Twitter bağlantısında hata: ${error}
+                        Twitter connection error: ${error}
                     </div>
-                    <a href="/" class="btn btn-primary mt-3">Ana Sayfaya Dön</a>
+                    <a href="/" class="btn btn-primary mt-3">Back to Home</a>
                 `;
                 return;
             }
@@ -64,9 +64,9 @@
                     statusMessage.innerHTML = `
                         <div class="alert alert-success mt-3">
                             <i class="bi bi-check-circle"></i>
-                            Twitter hesabınız başarıyla bağlandı!
+                            Your Twitter account has been successfully connected!
                         </div>
-                        <p>Ana sayfaya yönlendiriliyorsunuz...</p>
+                        <p>Redirecting to home page...</p>
                     `;
                     
                     // Store the auth code
@@ -80,9 +80,9 @@
                     statusMessage.innerHTML = `
                         <div class="alert alert-warning mt-3">
                             <i class="bi bi-exclamation-triangle"></i>
-                            Güvenlik doğrulaması başarısız.
+                            Security verification failed.
                         </div>
-                        <a href="/" class="btn btn-primary mt-3">Ana Sayfaya Dön</a>
+                        <a href="/" class="btn btn-primary mt-3">Back to Home</a>
                     `;
                 }
             } else {
@@ -90,9 +90,9 @@
                 statusMessage.innerHTML = `
                     <div class="alert alert-info mt-3">
                         <i class="bi bi-info-circle"></i>
-                        Twitter callback parametreleri bulunamadı.
+                        Twitter callback parameters not found.
                     </div>
-                    <a href="/" class="btn btn-primary mt-3">Ana Sayfaya Dön</a>
+                    <a href="/" class="btn btn-primary mt-3">Back to Home</a>
                 `;
             }
         });

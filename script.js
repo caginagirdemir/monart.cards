@@ -16,12 +16,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function initiateTwitterOAuth() {
         // Check if config is loaded
         if (!window.TWITTER_CONFIG || !window.TWITTER_CONFIG.clientId) {
-            showNotification('Twitter API yapılandırması bulunamadı. config.js dosyasını kontrol edin.', 'danger');
+            showNotification('Twitter API configuration not found. Please check config.js file.', 'danger');
             return;
         }
         
         // Show loading state
-        twitterConnectBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Bağlanıyor...';
+        twitterConnectBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Connecting...';
         twitterConnectBtn.disabled = true;
         
         // Generate OAuth state for security
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // In a real app, this should be done server-side for security
         // For demo purposes, we'll simulate the token exchange
         
-        showNotification('Twitter hesabınız başarıyla bağlandı!', 'success');
+        showNotification('Your Twitter account has been successfully connected!', 'success');
         
         // Simulate getting user data
         setTimeout(() => {
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function handleTwitterCallback(accessToken) {
         // Handle direct access token from callback
-        showNotification('Twitter hesabınız başarıyla bağlandı!', 'success');
+        showNotification('Your Twitter account has been successfully connected!', 'success');
         
         // Store the access token
         localStorage.setItem('twitter_access_token', accessToken);
@@ -156,18 +156,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Success - exchange code for token
                 exchangeCodeForToken(code);
             } else {
-                showNotification('OAuth state doğrulanamadı. Güvenlik hatası.', 'danger');
+                showNotification('OAuth state verification failed. Security error.', 'danger');
                 resetTwitterButton();
             }
         } else {
-            showNotification('Twitter callback parametreleri bulunamadı.', 'danger');
+            showNotification('Twitter callback parameters not found.', 'danger');
             resetTwitterButton();
         }
     }
     
     function fetchTwitterUserData() {
         // Show loading state
-        twitterConnectBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Veri alınıyor...';
+        twitterConnectBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Fetching data...';
         
         // In a real app, you would make an API call here
         // For demo, we'll use mock data
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         twitterProfile.style.display = 'block';
         
         // Update button
-        twitterConnectBtn.innerHTML = '<i class="bi bi-check-circle"></i>Bağlandı';
+        twitterConnectBtn.innerHTML = '<i class="bi bi-check-circle"></i>Connected';
         twitterConnectBtn.classList.remove('btn-primary');
         twitterConnectBtn.classList.add('btn-success');
         
