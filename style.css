@@ -199,7 +199,11 @@ html {
     border-radius: 20px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3), 0 0 20px rgba(255, 105, 180, 0.2);
+    box-shadow: 
+        0 0 30px rgba(255, 105, 180, 0.6),
+        0 0 60px rgba(255, 105, 180, 0.4),
+        0 0 90px rgba(255, 105, 180, 0.2),
+        0 10px 30px rgba(255, 105, 180, 0.3);
 }
 
 .card-header-placeholder {
@@ -334,4 +338,58 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #0056b3;
+}
+
+/* Contact Section */
+.contact-section {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    padding: 80px 0;
+    margin-top: 100px;
+    border-top: 1px solid #e9ecef;
+}
+
+.contact-title {
+    color: #333;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.contact-subtitle {
+    color: #666;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.contact-buttons .btn {
+    border-radius: 25px;
+    padding: 12px 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border-width: 2px;
+}
+
+.contact-buttons .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background-color: #333;
+    color: #fff;
+}
+
+.contact-buttons .btn i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+}
+
+.contact-info {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e9ecef;
+}
+
+.contact-info p {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
 }
