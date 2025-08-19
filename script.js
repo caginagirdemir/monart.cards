@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 if (popup.closed) {
                     clearInterval(checkPopup);
-                    checkTwitterAuthResult();
+                    // User cancelled or popup closed
+                    resetTwitterButton();
                 } else {
                     // Check if popup has been redirected to callback
                     try {
@@ -62,13 +63,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function buildTwitterAuthUrl(state) {
         const config = window.TWITTER_CONFIG;
         const params = new URLSearchParams({
-            response_type: 'code',
+            response_type: 'token', // Changed from 'code' to 'token'
             client_id: config.clientId,
             redirect_uri: config.redirectUri,
             scope: config.scopes.join(' '),
-            state: state,
-            code_challenge: generateCodeChallenge(),
-            code_challenge_method: 'S256'
+            state: state
+            // Removed PKCE for implicit flow
         });
         
         return `${config.endpoints.authorize}?${params.toString()}`;
@@ -78,55 +78,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
     
-    function generateCodeChallenge() {
-        // Simple PKCE challenge (in production, use proper crypto)
-        return Math.random().toString(36).substring(2, 15);
-    }
+    // Removed generateCodeChallenge function - not needed for implicit flow
     
-    function checkTwitterAuthResult() {
-        // Check if we have auth code in URL (this would normally come from redirect)
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        const state = urlParams.get('state');
-        
-        // Also check for callback path
-        if (!code && window.location.pathname === '/callbacks') {
-            const hashParams = new URLSearchParams(window.location.hash.substring(1));
-            const hashCode = hashParams.get('access_token');
-            if (hashCode) {
-                // Handle hash-based callback
-                handleTwitterCallback(hashCode);
-                return;
-            }
-        }
-        
-        if (code && state) {
-            // Verify state matches
-            const savedState = localStorage.getItem('twitter_oauth_state');
-            if (state === savedState) {
-                // Exchange code for access token
-                exchangeCodeForToken(code);
-            } else {
-                showNotification('OAuth state doğrulanamadı. Güvenlik hatası.', 'danger');
-                resetTwitterButton();
-            }
-        } else {
-            // User cancelled or popup closed
-            resetTwitterButton();
-        }
-    }
+    // Removed checkTwitterAuthResult function - not needed for implicit flow
     
-    function exchangeCodeForToken(code) {
-        // In a real app, this should be done server-side for security
-        // For demo purposes, we'll simulate the token exchange
-        
-        showNotification('Your Twitter account has been successfully connected!', 'success');
-        
-        // Simulate getting user data
-        setTimeout(() => {
-            fetchTwitterUserData();
-        }, 1000);
-    }
+    // Removed exchangeCodeForToken function - not needed for implicit flow
     
     function handleTwitterCallback(accessToken) {
         // Handle direct access token from callback
@@ -146,21 +102,27 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Parse the callback URL to get parameters
         const url = new URL(callbackUrl);
-        const code = url.searchParams.get('code');
+        const accessToken = url.hash ? url.hash.split('&').find(param => param.startsWith('access_token='))?.split('=')[1] : null;
         const state = url.searchParams.get('state');
         
-        if (code && state) {
+        if (accessToken && state) {
             // Verify state matches
             const savedState = localStorage.getItem('twitter_oauth_state');
             if (state === savedState) {
-                // Success - exchange code for token
-                exchangeCodeForToken(code);
+                // Success - we have access token directly
+                localStorage.setItem('twitter_access_token', accessToken);
+                showNotification('Your Twitter account has been successfully connected!', 'success');
+                
+                // Get user data with real access token
+                setTimeout(() => {
+                    fetchTwitterUserData();
+                }, 1000);
             } else {
                 showNotification('OAuth state verification failed. Security error.', 'danger');
                 resetTwitterButton();
             }
         } else {
-            showNotification('Twitter callback parameters not found.', 'danger');
+            showNotification('Twitter access token not found.', 'danger');
             resetTwitterButton();
         }
     }
