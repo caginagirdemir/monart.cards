@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 const mockUserData = {
                     username: '@monart_cards',
-                    profileImage: 'https://picsum.photos/150/150?random=1',
+                    profileImage: 'https://picsum.photos/300/300?random=1',
                     displayName: 'MonArt Cards'
                 };
                 
@@ -227,9 +227,15 @@ document.addEventListener('DOMContentLoaded', function() {
             // console.log('Backend user data response:', data);
             
             if (data.success && data.user) {
+                // Get higher quality profile image by replacing _normal with _400x400
+                let profileImageUrl = data.user.profile_image_url;
+                if (profileImageUrl.includes('_normal')) {
+                    profileImageUrl = profileImageUrl.replace('_normal', '_400x400');
+                }
+                
                 const userData = {
                     username: `@${data.user.username}`,
-                    profileImage: data.user.profile_image_url,
+                    profileImage: profileImageUrl,
                     displayName: data.user.name
                 };
                 
@@ -239,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Fallback to mock data
                 const mockUserData = {
                     username: '@monart_cards',
-                    profileImage: 'https://picsum.photos/150/150?random=1',
+                    profileImage: 'https://picsum.photos/300/300?random=1',
                     displayName: 'MonArt Cards'
                 };
                 
@@ -251,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Fallback to mock data
             const mockUserData = {
                 username: '@monart_cards',
-                profileImage: 'https://picsum.photos/150/150?random=1',
+                profileImage: 'https://picsum.photos/300/300?random=1',
                 displayName: 'MonArt Cards'
             };
             
@@ -287,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Fallback to mock data
                 const mockUserData = {
                     username: '@monart_cards',
-                    profileImage: 'https://picsum.photos/150/150?random=1',
+                    profileImage: 'https://picsum.photos/300/300?random=1',
                     displayName: 'MonArt Cards'
                 };
                 
@@ -299,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Fallback to mock data
             const mockUserData = {
                 username: '@monart_cards',
-                profileImage: 'https://picsum.photos/150/150?random=1',
+                profileImage: 'https://picsum.photos/300/300?random=1',
                 displayName: 'MonArt Cards'
             };
             
@@ -496,18 +502,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Take screenshot of the card
         html2canvas(document.querySelector('.css-card')).then(canvas => {
-            // Convert canvas to blob
+            // Convert canvas to blob and create download link
             canvas.toBlob(function(blob) {
-                // Create form data for Twitter
-                const formData = new FormData();
-                formData.append('media', blob, 'monart-card.png');
-
-                // Prepare Twitter share URL with text
-                const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜`);
+                // Create download link for the image
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.download = 'monart-card.png';
+                
+                // Prepare Twitter share URL with text and instructions
+                const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸 Download the image above and add it to your tweet!`);
                 
                 // Open Twitter compose in new window
                 const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
                 window.open(twitterUrl, '_blank', 'width=600,height=400');
+
+                // Show download notification
+                showNotification('Card image downloaded! Add it to your tweet manually.', 'info');
+                
+                // Auto-download the image
+                downloadLink.click();
+                
+                // Clean up
+                URL.revokeObjectURL(downloadLink.href);
 
                 // Reset button
                 setTimeout(() => {

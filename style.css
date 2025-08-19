@@ -3,6 +3,12 @@ body {
     background-color: #000000;
     color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('backdrop.png'), url('gridlines.png');
+    background-repeat: no-repeat, repeat;
+    background-position: top center, top left;
+    background-size: 100% auto, auto;
+    background-attachment: scroll, scroll;
+    min-height: 100vh;
 }
 
 /* Hero Section */
@@ -304,10 +310,12 @@ html {
 .profile-image {
     border: 3px solid #fff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    width: 80px !important;
-    height: 80px !important;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
     border-radius: 50%;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 }
 
 /* Custom scrollbar */
