@@ -587,9 +587,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Convert canvas to blob and download the image
                 canvas.toBlob(function(blob) {
                     // Create download link for the image
-                    const downloadLink = document.createElement('a');
-                    downloadLink.href = URL.createObjectURL(blob);
-                    downloadLink.download = 'monart-card.png';
+                    //const downloadLink = document.createElement('a');
+                   // downloadLink.href = URL.createObjectURL(blob);
+                    //downloadLink.download = 'monart-card.png';
                     
                     // Download the image automatically
                     //downloadLink.click();
