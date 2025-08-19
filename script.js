@@ -102,6 +102,9 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Config:', config);
         console.log('Backend URL:', config.backendUrl);
         console.log('Full URL:', `${config.backendUrl}/twitter/token`);
+        console.log('PKCE Debug Frontend:');
+        console.log('- code_verifier from localStorage:', codeVerifier);
+        console.log('- code_verifier length:', codeVerifier ? codeVerifier.length : 'undefined');
         
         fetch(`${config.backendUrl}/twitter/token`, {
             method: 'POST',
