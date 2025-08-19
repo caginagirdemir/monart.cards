@@ -179,15 +179,27 @@ html {
 .profile-card-container {
     position: relative;
     display: inline-block;
+    background: #000;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* Card Image */
+.profile-card-container img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
 }
 
 /* Profile Overlay */
 .profile-overlay {
-    top: 50%;
+    top: 35%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     width: 100%;
+    pointer-events: none;
 }
 
 /* Profile Image */
@@ -195,19 +207,25 @@ html {
     border: 3px solid #fff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     margin-bottom: 10px;
+    width: 120px !important;
+    height: 120px !important;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 /* Profile Username */
 .profile-username {
     color: #333;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
     text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
     background: rgba(255,255,255,0.9);
-    padding: 5px 10px;
-    border-radius: 15px;
+    padding: 4px 8px;
+    border-radius: 12px;
     display: inline-block;
-    margin-top: 5px;
+    margin-top: 8px;
+    max-width: 200px;
+    word-wrap: break-word;
 }
 
 /* Custom scrollbar */
