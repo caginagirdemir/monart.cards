@@ -169,9 +169,64 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading state
         twitterConnectBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Fetching data...';
         
-        // In a real app, you would make an API call here
-        // For demo, we'll use mock data
-        setTimeout(() => {
+        // Get access token from localStorage
+        const accessToken = localStorage.getItem('twitter_access_token');
+        
+        if (accessToken) {
+            // Make real Twitter API call
+            fetchTwitterUserFromAPI(accessToken);
+        } else {
+            // Fallback to mock data if no access token
+            setTimeout(() => {
+                const mockUserData = {
+                    username: '@monart_cards',
+                    profileImage: 'https://picsum.photos/150/150?random=1',
+                    displayName: 'MonArt Cards'
+                };
+                
+                updateTwitterProfile(mockUserData);
+            }, 1500);
+        }
+    }
+    
+    function fetchTwitterUserFromAPI(accessToken) {
+        // Twitter API v2 endpoint for user info
+        const url = 'https://api.twitter.com/2/users/me?user.fields=profile_image_url,username,name';
+        
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Twitter API response:', data);
+            
+            if (data.data) {
+                const userData = {
+                    username: `@${data.data.username}`,
+                    profileImage: data.data.profile_image_url,
+                    displayName: data.data.name
+                };
+                
+                updateTwitterProfile(userData);
+            } else {
+                console.error('Twitter API error:', data);
+                // Fallback to mock data
+                const mockUserData = {
+                    username: '@monart_cards',
+                    profileImage: 'https://picsum.photos/150/150?random=1',
+                    displayName: 'MonArt Cards'
+                };
+                
+                updateTwitterProfile(mockUserData);
+            }
+        })
+        .catch(error => {
+            console.error('Twitter API fetch error:', error);
+            // Fallback to mock data
             const mockUserData = {
                 username: '@monart_cards',
                 profileImage: 'https://picsum.photos/150/150?random=1',
@@ -179,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             updateTwitterProfile(mockUserData);
-        }, 1500);
+        });
     }
     
     function updateTwitterProfile(userData) {
