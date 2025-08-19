@@ -18,6 +18,9 @@ const TWITTER_CONFIG = {
     // Scopes for user data access
     scopes: ['tweet.read', 'users.read', 'offline.access'],
     
+    // Backend API URL (Vercel)
+    backendUrl: 'https://monartcards.vercel.app/api',
+    
     // API endpoints
     endpoints: {
         authorize: 'https://twitter.com/i/oauth2/authorize',
