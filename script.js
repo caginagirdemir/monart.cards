@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             const mockUserData = {
                 username: '@monart_cards',
-                profileImage: 'https://via.placeholder.com/150/1DA1F2/FFFFFF?text=MC',
+                profileImage: 'https://picsum.photos/150/150?random=1',
                 displayName: 'MonArt Cards'
             };
             
@@ -353,6 +353,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.head.appendChild(style);
 
     // Console welcome message
-    console.log('🎨 MonArt Cards - Hoş Geldiniz!');
-    console.log('Modern ve yaratıcı kart tasarımları için hazır.');
+    console.log('🎨 MonArt Cards - Welcome!');
+    console.log('Ready for modern and creative card designs.');
 });
