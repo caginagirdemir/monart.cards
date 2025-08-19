@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             scope: config.scopes.join(' '),
             state: state,
             code_challenge: generateCodeChallenge(),
-            code_challenge_method: 'S256'
+            code_challenge_method: 'plain'
         });
         
         return `${config.endpoints.authorize}?${params.toString()}`;
