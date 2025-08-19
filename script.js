@@ -98,13 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const config = window.TWITTER_CONFIG;
         const codeVerifier = localStorage.getItem('twitter_code_verifier');
         
-        console.log('Exchanging code for token via backend API...');
-        console.log('Config:', config);
-        console.log('Backend URL:', config.backendUrl);
-        console.log('Full URL:', `${config.backendUrl}/twitter/token`);
-        console.log('PKCE Debug Frontend:');
-        console.log('- code_verifier from localStorage:', codeVerifier);
-        console.log('- code_verifier length:', codeVerifier ? codeVerifier.length : 'undefined');
+
         
         fetch(`${config.backendUrl}/twitter/token`, {
             method: 'POST',

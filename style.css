@@ -175,6 +175,41 @@ html {
     border: 3px solid #1DA1F2;
 }
 
+/* Profile Card Container */
+.profile-card-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Profile Overlay */
+.profile-overlay {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+}
+
+/* Profile Image */
+.profile-image {
+    border: 3px solid #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    margin-bottom: 10px;
+}
+
+/* Profile Username */
+.profile-username {
+    color: #333;
+    font-weight: bold;
+    font-size: 18px;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.9);
+    padding: 5px 10px;
+    border-radius: 15px;
+    display: inline-block;
+    margin-top: 5px;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
     width: 10px;
