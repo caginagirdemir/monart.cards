@@ -512,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 downloadLink.download = 'monart-card.png';
                 
                 // Prepare Twitter share URL with text and instructions
-                const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸 Download the image above and add it to your tweet!`);
+                const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸`);
                 
                 // Open Twitter compose in new window
                 const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
