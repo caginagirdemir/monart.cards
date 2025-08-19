@@ -502,59 +502,88 @@ document.addEventListener('DOMContentLoaded', function() {
         shareXBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Preparing...';
         shareXBtn.disabled = true;
 
-        // Take screenshot of the card
-        html2canvas(document.querySelector('.css-card')).then(canvas => {
-            // Convert canvas to blob and create download link
-            canvas.toBlob(function(blob) {
-                // Create download link for the image
-                const downloadLink = document.createElement('a');
-                downloadLink.href = URL.createObjectURL(blob);
-                downloadLink.download = 'monart-card.png';
-                
-                // Prepare Twitter share URL with text and instructions
-                const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸`);
-                
-                // Open Twitter compose in new window
+        // Take screenshot of the card with better image handling
+        const cardElement = document.querySelector('.css-card');
+        
+        // Wait for all images to load before taking screenshot
+        const profileImg = cardElement.querySelector('#profileImage');
+        if (profileImg && profileImg.src) {
+            // Create a new image to ensure it's loaded
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                takeScreenshot(cardElement);
+            };
+            img.onerror = function() {
+                // If image fails to load, take screenshot anyway
+                takeScreenshot(cardElement);
+            };
+            img.src = profileImg.src;
+        } else {
+            takeScreenshot(cardElement);
+        }
+        
+        function takeScreenshot(element) {
+            html2canvas(element, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                imageTimeout: 15000
+            }).then(canvas => {
+                // Convert canvas to blob and create download link
+                canvas.toBlob(function(blob) {
+                    // Create download link for the image
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = URL.createObjectURL(blob);
+                    downloadLink.download = 'monart-card.png';
+                    
+                    // Prepare Twitter share URL with text and instructions
+                    const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸`);
+                    
+                    // Open Twitter compose in new window
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
+
+                    // Show download notification
+                    showNotification('Card image downloaded! Add it to your tweet manually.', 'info');
+                    
+                    // Auto-download the image with better user experience
+                    try {
+                        downloadLink.click();
+                        console.log('Download initiated');
+                    } catch (e) {
+                        console.log('Auto-download failed, user may need to right-click and save');
+                        // Fallback: show the image in a new tab for manual save
+                        const imageUrl = URL.createObjectURL(blob);
+                        window.open(imageUrl, '_blank');
+                    }
+                    
+                    // Clean up
+                    setTimeout(() => {
+                        URL.revokeObjectURL(downloadLink.href);
+                    }, 1000);
+
+                    // Reset button
+                    setTimeout(() => {
+                        shareXBtn.innerHTML = '<i class="bi bi-twitter-x"></i>Share on X';
+                        shareXBtn.disabled = false;
+                    }, 2000);
+
+                }, 'image/png');
+            }).catch(error => {
+                console.error('Screenshot error:', error);
+                // Fallback: just open Twitter with text
+                const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜`);
                 const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
                 window.open(twitterUrl, '_blank', 'width=600,height=400');
-
-                // Show download notification
-                showNotification('Card image downloaded! Add it to your tweet manually.', 'info');
                 
-                // Auto-download the image with better user experience
-                try {
-                    downloadLink.click();
-                    console.log('Download initiated');
-                } catch (e) {
-                    console.log('Auto-download failed, user may need to right-click and save');
-                    // Fallback: show the image in a new tab for manual save
-                    const imageUrl = URL.createObjectURL(blob);
-                    window.open(imageUrl, '_blank');
-                }
-                
-                // Clean up
-                setTimeout(() => {
-                    URL.revokeObjectURL(downloadLink.href);
-                }, 1000);
-
                 // Reset button
-                setTimeout(() => {
-                    shareXBtn.innerHTML = '<i class="bi bi-twitter-x"></i>Share on X';
-                    shareXBtn.disabled = false;
-                }, 2000);
-
-            }, 'image/png');
-        }).catch(error => {
-            console.error('Screenshot error:', error);
-            // Fallback: just open Twitter with text
-            const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜`);
-            const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
-            window.open(twitterUrl, '_blank', 'width=600,height=400');
-            
-            // Reset button
-            shareXBtn.innerHTML = '<i class="bi bi-twitter-x"></i>Share on X';
-            shareXBtn.disabled = false;
-        });
+                shareXBtn.innerHTML = '<i class="bi bi-twitter-x"></i>Share on X';
+                shareXBtn.disabled = false;
+            });
+        }
     }
 
     // Console welcome message
