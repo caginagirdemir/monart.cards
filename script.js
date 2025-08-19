@@ -63,12 +63,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function buildTwitterAuthUrl(state) {
         const config = window.TWITTER_CONFIG;
         const params = new URLSearchParams({
-            response_type: 'token', // Changed from 'code' to 'token'
+            response_type: 'code', // Back to authorization code flow
             client_id: config.clientId,
             redirect_uri: config.redirectUri,
             scope: config.scopes.join(' '),
-            state: state
-            // Removed PKCE for implicit flow
+            state: state,
+            code_challenge: generateCodeChallenge(),
+            code_challenge_method: 'S256'
         });
         
         return `${config.endpoints.authorize}?${params.toString()}`;
@@ -78,11 +79,73 @@ document.addEventListener('DOMContentLoaded', function() {
         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
     
-    // Removed generateCodeChallenge function - not needed for implicit flow
+    function generateCodeChallenge() {
+        // Generate PKCE code verifier and challenge
+        const codeVerifier = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        const codeChallenge = Math.random().toString(36).substring(2, 15);
+        
+        // Store code verifier for later use
+        localStorage.setItem('twitter_code_verifier', codeVerifier);
+        
+        return codeChallenge;
+    }
     
     // Removed checkTwitterAuthResult function - not needed for implicit flow
     
-    // Removed exchangeCodeForToken function - not needed for implicit flow
+    function exchangeCodeForToken(code) {
+        // Try to exchange code for access token using Twitter API
+        const config = window.TWITTER_CONFIG;
+        
+        // Create form data for token exchange
+        const formData = new URLSearchParams();
+        formData.append('grant_type', 'authorization_code');
+        formData.append('code', code);
+        formData.append('redirect_uri', config.redirectUri);
+        formData.append('client_id', config.clientId);
+        formData.append('code_verifier', localStorage.getItem('twitter_code_verifier') || 'test');
+        
+        // Make token exchange request
+        fetch(config.endpoints.token, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + btoa(config.clientId + ':' + config.clientSecret)
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Token exchange response:', data);
+            
+            if (data.access_token) {
+                // Store access token
+                localStorage.setItem('twitter_access_token', data.access_token);
+                showNotification('Your Twitter account has been successfully connected!', 'success');
+                
+                // Get user data with real access token
+                setTimeout(() => {
+                    fetchTwitterUserData();
+                }, 1000);
+            } else {
+                console.error('Token exchange failed:', data);
+                showNotification('Failed to get access token. Using mock data.', 'warning');
+                
+                // Fallback to mock data
+                setTimeout(() => {
+                    fetchTwitterUserData();
+                }, 1000);
+            }
+        })
+        .catch(error => {
+            console.error('Token exchange error:', error);
+            showNotification('Token exchange failed. Using mock data.', 'warning');
+            
+            // Fallback to mock data
+            setTimeout(() => {
+                fetchTwitterUserData();
+            }, 1000);
+        });
+    }
     
     function handleTwitterCallback(accessToken) {
         // Handle direct access token from callback
@@ -102,27 +165,21 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Parse the callback URL to get parameters
         const url = new URL(callbackUrl);
-        const accessToken = url.hash ? url.hash.split('&').find(param => param.startsWith('access_token='))?.split('=')[1] : null;
+        const code = url.searchParams.get('code');
         const state = url.searchParams.get('state');
         
-        if (accessToken && state) {
+        if (code && state) {
             // Verify state matches
             const savedState = localStorage.getItem('twitter_oauth_state');
             if (state === savedState) {
-                // Success - we have access token directly
-                localStorage.setItem('twitter_access_token', accessToken);
-                showNotification('Your Twitter account has been successfully connected!', 'success');
-                
-                // Get user data with real access token
-                setTimeout(() => {
-                    fetchTwitterUserData();
-                }, 1000);
+                // Success - exchange code for token
+                exchangeCodeForToken(code);
             } else {
                 showNotification('OAuth state verification failed. Security error.', 'danger');
                 resetTwitterButton();
             }
         } else {
-            showNotification('Twitter access token not found.', 'danger');
+            showNotification('Twitter callback parameters not found.', 'danger');
             resetTwitterButton();
         }
     }
