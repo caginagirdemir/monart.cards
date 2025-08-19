@@ -584,58 +584,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 logging: false,
                 imageTimeout: 15000
             }).then(canvas => {
-                // Convert canvas to blob and copy to clipboard
+                // Convert canvas to blob and download the image
                 canvas.toBlob(function(blob) {
-                    // Create a ClipboardItem for the image
-                    const clipboardItem = new ClipboardItem({
-                        'image/png': blob
-                    });
+                    // Create download link for the image
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = URL.createObjectURL(blob);
+                    downloadLink.download = 'monart-card.png';
                     
-                    // Copy to clipboard
-                    navigator.clipboard.write([clipboardItem]).then(() => {
-                        // Show success notification
-                        showNotification('Card image copied to clipboard! You can now paste it directly into Twitter.', 'success');
-                        
-                        // Prepare Twitter share URL with text
-                        const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸`);
-                        
-                        // Open Twitter compose in new window
-                        const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
-                        window.open(twitterUrl, '_blank', 'width=600,height=400');
+                    // Download the image automatically
+                    downloadLink.click();
+                    
+                    // Show success notification
+                    showNotification('Card image downloaded! Add it to your tweet manually.', 'success');
+                    
+                    // Prepare Twitter share URL with text
+                    const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸 Image downloaded - add it to your tweet!`);
+                    
+                    // Open Twitter compose in new window
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
+                    window.open(twitterUrl, '_blank', 'width=600,height=400');
 
-                        // Reset button
-                        setTimeout(() => {
-                            shareXBtn.innerHTML = '<i class="bi bi-twitter-x"></i>Share on X';
-                            shareXBtn.disabled = false;
-                        }, 2000);
-                        
-                    }).catch(err => {
-                        console.error('Failed to copy to clipboard:', err);
-                        // Fallback: download the image
-                        const downloadLink = document.createElement('a');
-                        downloadLink.href = URL.createObjectURL(blob);
-                        downloadLink.download = 'monart-card.png';
-                        downloadLink.click();
-                        
-                        showNotification('Image copied to clipboard failed. Image downloaded instead.', 'warning');
-                        
-                        // Reset button
-                        setTimeout(() => {
-                            shareXBtn.innerHTML = '<i class="bi bi-twitter-x"></i>Share on X';
-                            shareXBtn.disabled = false;
-                        }, 2000);
-                        
-                        // Clean up
-                        setTimeout(() => {
-                            URL.revokeObjectURL(downloadLink.href);
-                        }, 1000);
-                    });
+                    // Reset button
+                    setTimeout(() => {
+                        shareXBtn.innerHTML = '<i class="bi bi-twitter-x"></i>Share on X';
+                        shareXBtn.disabled = false;
+                    }, 2000);
+                    
+                    // Clean up
+                    setTimeout(() => {
+                        URL.revokeObjectURL(downloadLink.href);
+                    }, 1000);
                     
                 }, 'image/png');
             }).catch(error => {
                 console.error('Screenshot error:', error);
                 // Fallback: just open Twitter with text
-                const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜`);
+                const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monart Cards community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜`);
                 const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
                 window.open(twitterUrl, '_blank', 'width=600,height=400');
                 
