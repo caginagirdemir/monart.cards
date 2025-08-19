@@ -611,9 +611,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }, 2000);
                     
                     // Clean up
-                    setTimeout(() => {
-                        URL.revokeObjectURL(downloadLink.href);
-                    }, 1000);
+                    // setTimeout(() => {
+                    //     URL.revokeObjectURL(downloadLink.href);
+                    // }, 1000);
                     
                 }, 'image/png');
             }).catch(error => {
