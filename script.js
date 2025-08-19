@@ -116,11 +116,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 code_verifier: codeVerifier
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            // console.log('Backend token exchange response:', data);
+            console.log('Backend token exchange response:', data);
             
-            if (data.success && data.access_token) {
+            if (data && data.success && data.access_token) {
                 // Store access token
                 localStorage.setItem('twitter_access_token', data.access_token);
                 showNotification('Your Twitter account has been successfully connected!', 'success');
@@ -222,21 +227,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 'access_token': accessToken
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            // console.log('Backend user data response:', data);
+            console.log('Backend user data response:', data);
             
-            if (data.success && data.user) {
+            if (data && data.success && data.user) {
                 // Get higher quality profile image by replacing _normal with _400x400
                 let profileImageUrl = data.user.profile_image_url;
-                if (profileImageUrl.includes('_normal')) {
+                if (profileImageUrl && profileImageUrl.includes('_normal')) {
                     profileImageUrl = profileImageUrl.replace('_normal', '_400x400');
                 }
                 
                 const userData = {
-                    username: `@${data.user.username}`,
-                    profileImage: profileImageUrl,
-                    displayName: data.user.name
+                    username: `@${data.user.username || 'monart_cards'}`,
+                    profileImage: profileImageUrl || 'https://picsum.photos/300/300?random=1',
+                    displayName: data.user.name || 'MonArt Cards'
                 };
                 
                 updateTwitterProfile(userData);
