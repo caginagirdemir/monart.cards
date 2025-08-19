@@ -483,6 +483,52 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
 
+    // Share X Button functionality
+    const shareXBtn = document.getElementById('shareXBtn');
+    if (shareXBtn) {
+        shareXBtn.addEventListener('click', shareOnTwitter);
+    }
+
+    function shareOnTwitter() {
+        // Show loading state
+        shareXBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Preparing...';
+        shareXBtn.disabled = true;
+
+        // Take screenshot of the card
+        html2canvas(document.querySelector('.css-card')).then(canvas => {
+            // Convert canvas to blob
+            canvas.toBlob(function(blob) {
+                // Create form data for Twitter
+                const formData = new FormData();
+                formData.append('media', blob, 'monart-card.png');
+
+                // Prepare Twitter share URL with text
+                const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜`);
+                
+                // Open Twitter compose in new window
+                const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
+                window.open(twitterUrl, '_blank', 'width=600,height=400');
+
+                // Reset button
+                setTimeout(() => {
+                    shareXBtn.innerHTML = '<i class="bi bi-twitter-x"></i>Share on X';
+                    shareXBtn.disabled = false;
+                }, 2000);
+
+            }, 'image/png');
+        }).catch(error => {
+            console.error('Screenshot error:', error);
+            // Fallback: just open Twitter with text
+            const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜`);
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
+            window.open(twitterUrl, '_blank', 'width=600,height=400');
+            
+            // Reset button
+            shareXBtn.innerHTML = '<i class="bi bi-twitter-x"></i>Share on X';
+            shareXBtn.disabled = false;
+        });
+    }
+
     // Console welcome message
     // console.log('🎨 MonArt Cards - Welcome!');
     // console.log('Ready for modern and creative card designs.');

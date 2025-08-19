@@ -274,6 +274,32 @@ html {
     text-align: left;
 }
 
+/* Share X Button */
+.share-button-container {
+    margin-top: 20px;
+}
+
+#shareXBtn {
+    background: linear-gradient(45deg, #000000, #333333);
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border-radius: 25px;
+}
+
+#shareXBtn:hover {
+    background: linear-gradient(45deg, #333333, #000000);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+#shareXBtn i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+}
+
 /* Profile Image */
 .profile-image {
     border: 3px solid #fff;
