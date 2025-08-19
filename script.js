@@ -420,10 +420,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Navbar scroll effect
     window.addEventListener('scroll', function() {
         const navbar = document.querySelector('.navbar');
-        if (window.scrollY > 50) {
-            navbar.classList.add('navbar-scrolled');
-        } else {
-            navbar.classList.remove('navbar-scrolled');
+        if (navbar) {
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
         }
     });
 
@@ -519,11 +521,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show download notification
                 showNotification('Card image downloaded! Add it to your tweet manually.', 'info');
                 
-                // Auto-download the image
-                downloadLink.click();
+                // Auto-download the image with better user experience
+                try {
+                    downloadLink.click();
+                    console.log('Download initiated');
+                } catch (e) {
+                    console.log('Auto-download failed, user may need to right-click and save');
+                    // Fallback: show the image in a new tab for manual save
+                    const imageUrl = URL.createObjectURL(blob);
+                    window.open(imageUrl, '_blank');
+                }
                 
                 // Clean up
-                URL.revokeObjectURL(downloadLink.href);
+                setTimeout(() => {
+                    URL.revokeObjectURL(downloadLink.href);
+                }, 1000);
 
                 // Reset button
                 setTimeout(() => {
