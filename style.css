@@ -318,8 +318,8 @@ html {
 .profile-image {
     border: 3px solid #fff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    width: 120px;
-    height: 120px;
+    width: 200px;
+    height: 200px;
     object-fit: cover;
     border-radius: 50%;
     image-rendering: -webkit-optimize-contrast;
@@ -330,7 +330,7 @@ html {
 .logo-image {
     max-width: 100%;
     height: auto;
-    max-height: 200px;
+    max-height: 120px;
     margin-bottom: 20px;
 }
 
