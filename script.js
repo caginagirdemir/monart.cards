@@ -118,7 +118,13 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                if (response.status === 429) {
+                    throw new Error('Rate limit exceeded. Please try again later.');
+                } else if (response.status >= 500) {
+                    throw new Error('Server error. Please try again later.');
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
             }
             return response.json();
         })
@@ -146,7 +152,15 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Backend API error:', error);
-            showNotification('Backend API error. Using mock data.', 'warning');
+            
+            // Show user-friendly error message
+            if (error.message.includes('Rate limit exceeded')) {
+                showNotification('API rate limit exceeded. Using demo data. Please try again later.', 'warning');
+            } else if (error.message.includes('Server error')) {
+                showNotification('Server temporarily unavailable. Using demo data.', 'warning');
+            } else {
+                showNotification('Connection failed. Using demo data.', 'warning');
+            }
             
             // Fallback to mock data
             setTimeout(() => {
@@ -229,7 +243,13 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                if (response.status === 429) {
+                    throw new Error('Rate limit exceeded. Please try again later.');
+                } else if (response.status >= 500) {
+                    throw new Error('Server error. Please try again later.');
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
             }
             return response.json();
         })
@@ -264,6 +284,16 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Backend user data error:', error);
+            
+            // Show user-friendly error message
+            if (error.message.includes('Rate limit exceeded')) {
+                showNotification('API rate limit exceeded. Using demo data. Please try again later.', 'warning');
+            } else if (error.message.includes('Server error')) {
+                showNotification('Server temporarily unavailable. Using demo data.', 'warning');
+            } else {
+                showNotification('Connection failed. Using demo data.', 'warning');
+            }
+            
             // Fallback to mock data
             const mockUserData = {
                 username: '@monart_cards',
@@ -513,6 +543,12 @@ document.addEventListener('DOMContentLoaded', function() {
         copyImageBtn.addEventListener('click', copyImageToClipboard);
     }
 
+    // Download Image Button functionality
+    const downloadImageBtn = document.getElementById('downloadImageBtn');
+    if (downloadImageBtn) {
+        downloadImageBtn.addEventListener('click', downloadImage);
+    }
+
     function shareOnTwitter() {
         // Show loading state
         shareXBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Preparing...';
@@ -693,6 +729,77 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Reset button
                 copyImageBtn.innerHTML = '<i class="bi bi-clipboard"></i>Copy Image';
                 copyImageBtn.disabled = false;
+            });
+        }
+    }
+
+    function downloadImage() {
+        // Show loading state
+        downloadImageBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Downloading...';
+        downloadImageBtn.disabled = true;
+
+        // Take screenshot of the card with better image handling
+        const cardElement = document.querySelector('.css-card');
+        
+        // Wait for all images to load before taking screenshot
+        const profileImg = cardElement.querySelector('#profileImage');
+        if (profileImg && profileImg.src) {
+            // Create a new image to ensure it's loaded
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                takeScreenshotForDownload(cardElement);
+            };
+            img.onerror = function() {
+                // If image fails to load, take screenshot anyway
+                takeScreenshotForDownload(cardElement);
+            };
+            img.src = profileImg.src;
+        } else {
+            takeScreenshotForDownload(cardElement);
+        }
+        
+        function takeScreenshotForDownload(element) {
+            html2canvas(element, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                imageTimeout: 15000
+            }).then(canvas => {
+                // Convert canvas to blob and download
+                canvas.toBlob(function(blob) {
+                    // Create download link
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = URL.createObjectURL(blob);
+                    downloadLink.download = 'monart-card.png';
+                    
+                    // Trigger download
+                    downloadLink.click();
+                    
+                    // Show success notification
+                    showNotification('Card image downloaded successfully!', 'success');
+                    
+                    // Reset button
+                    setTimeout(() => {
+                        downloadImageBtn.innerHTML = '<i class="bi bi-download"></i>Download Image';
+                        downloadImageBtn.disabled = false;
+                    }, 2000);
+                    
+                    // Clean up
+                    setTimeout(() => {
+                        URL.revokeObjectURL(downloadLink.href);
+                    }, 1000);
+                    
+                }, 'image/png');
+            }).catch(error => {
+                console.error('Screenshot error:', error);
+                showNotification('Failed to capture card image.', 'danger');
+                
+                // Reset button
+                downloadImageBtn.innerHTML = '<i class="bi bi-download"></i>Download Image';
+                downloadImageBtn.disabled = false;
             });
         }
     }
