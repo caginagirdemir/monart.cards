@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Bağlantısı - MonArt Cards</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-12 text-center">
+                <div class="card bg-dark text-white mx-auto" style="max-width: 400px;">
+                    <div class="card-body text-center">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Yükleniyor...</span>
+                        </div>
+                        <h5 class="card-title">Twitter Bağlantısı</h5>
+                        <p class="card-text">Hesabınız bağlanıyor...</p>
+                        <div id="statusMessage"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Twitter API Config -->
+    <script src="config.js"></script>
+    <!-- Callback Handler -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // Check for Twitter callback parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const state = urlParams.get('state');
+            const error = urlParams.get('error');
+            
+            if (error) {
+                // Handle error
+                statusMessage.innerHTML = `
+                    <div class="alert alert-danger mt-3">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Twitter bağlantısında hata: ${error}
+                    </div>
+                    <a href="/" class="btn btn-primary mt-3">Ana Sayfaya Dön</a>
+                `;
+                return;
+            }
+            
+            if (code && state) {
+                // Verify state
+                const savedState = localStorage.getItem('twitter_oauth_state');
+                if (state === savedState) {
+                    // Success - redirect back to main page
+                    statusMessage.innerHTML = `
+                        <div class="alert alert-success mt-3">
+                            <i class="bi bi-check-circle"></i>
+                            Twitter hesabınız başarıyla bağlandı!
+                        </div>
+                        <p>Ana sayfaya yönlendiriliyorsunuz...</p>
+                    `;
+                    
+                    // Store the auth code
+                    localStorage.setItem('twitter_auth_code', code);
+                    
+                    // Redirect back to main page after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 3000);
+                } else {
+                    statusMessage.innerHTML = `
+                        <div class="alert alert-warning mt-3">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Güvenlik doğrulaması başarısız.
+                        </div>
+                        <a href="/" class="btn btn-primary mt-3">Ana Sayfaya Dön</a>
+                    `;
+                }
+            } else {
+                // No parameters - show error
+                statusMessage.innerHTML = `
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-info-circle"></i>
+                        Twitter callback parametreleri bulunamadı.
+                    </div>
+                    <a href="/" class="btn btn-primary mt-3">Ana Sayfaya Dön</a>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
