@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     showNotification('Card image downloaded! Add it to your tweet manually.', 'success');
                     
                     // Prepare Twitter share URL with text
-                    const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸 Image downloaded - add it to your tweet!`);
+                    const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸`);
                     
                     // Open Twitter compose in new window
                     const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
