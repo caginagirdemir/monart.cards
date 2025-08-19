@@ -155,11 +155,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show user-friendly error message
             if (error.message.includes('Rate limit exceeded')) {
-                showNotification('API rate limit exceeded. Using demo data. Please try again later.', 'warning');
+                showNotification('API rate limit exceeded (429). Too many requests. Using demo data. Please wait a few minutes and try again.', 'danger');
             } else if (error.message.includes('Server error')) {
-                showNotification('Server temporarily unavailable. Using demo data.', 'warning');
+                showNotification('Server temporarily unavailable (5xx error). Using demo data. Please try again later.', 'danger');
             } else {
-                showNotification('Connection failed. Using demo data.', 'warning');
+                showNotification('Connection failed. This may be due to rate limiting or server issues. Using demo data. Please try again later.', 'danger');
             }
             
             // Fallback to mock data
@@ -287,11 +287,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show user-friendly error message
             if (error.message.includes('Rate limit exceeded')) {
-                showNotification('API rate limit exceeded. Using demo data. Please try again later.', 'warning');
+                showNotification('API rate limit exceeded (429). Too many requests. Using demo data. Please wait a few minutes and try again.', 'danger');
             } else if (error.message.includes('Server error')) {
-                showNotification('Server temporarily unavailable. Using demo data.', 'warning');
+                showNotification('Server temporarily unavailable (5xx error). Using demo data. Please try again later.', 'danger');
             } else {
-                showNotification('Connection failed. Using demo data.', 'warning');
+                showNotification('Connection failed. This may be due to rate limiting or server issues. Using demo data. Please try again later.', 'danger');
             }
             
             // Fallback to mock data
