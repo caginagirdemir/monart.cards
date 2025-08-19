@@ -497,6 +497,12 @@ document.addEventListener('DOMContentLoaded', function() {
         shareXBtn.addEventListener('click', shareOnTwitter);
     }
 
+    // Copy Image Button functionality
+    const copyImageBtn = document.getElementById('copyImageBtn');
+    if (copyImageBtn) {
+        copyImageBtn.addEventListener('click', copyImageToClipboard);
+    }
+
     function shareOnTwitter() {
         // Show loading state
         shareXBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Preparing...';
@@ -545,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         showNotification('Card image copied to clipboard! You can now paste it directly into Twitter.', 'success');
                         
                         // Prepare Twitter share URL with text
-                        const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸 Image copied to clipboard - paste it here!`);
+                        const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸`);
                         
                         // Open Twitter compose in new window
                         const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
@@ -590,6 +596,93 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Reset button
                 shareXBtn.innerHTML = '<i class="bi bi-twitter-x"></i>Share on X';
                 shareXBtn.disabled = false;
+            });
+        }
+    }
+
+    function copyImageToClipboard() {
+        // Show loading state
+        copyImageBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Copying...';
+        copyImageBtn.disabled = true;
+
+        // Take screenshot of the card with better image handling
+        const cardElement = document.querySelector('.css-card');
+        
+        // Wait for all images to load before taking screenshot
+        const profileImg = cardElement.querySelector('#profileImage');
+        if (profileImg && profileImg.src) {
+            // Create a new image to ensure it's loaded
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                takeScreenshotForCopy(cardElement);
+            };
+            img.onerror = function() {
+                // If image fails to load, take screenshot anyway
+                takeScreenshotForCopy(cardElement);
+            };
+            img.src = profileImg.src;
+        } else {
+            takeScreenshotForCopy(cardElement);
+        }
+        
+        function takeScreenshotForCopy(element) {
+            html2canvas(element, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                imageTimeout: 15000
+            }).then(canvas => {
+                // Convert canvas to blob and copy to clipboard
+                canvas.toBlob(function(blob) {
+                    // Create a ClipboardItem for the image
+                    const clipboardItem = new ClipboardItem({
+                        'image/png': blob
+                    });
+                    
+                    // Copy to clipboard
+                    navigator.clipboard.write([clipboardItem]).then(() => {
+                        // Show success notification
+                        showNotification('Card image copied to clipboard! You can now paste it anywhere.', 'success');
+                        
+                        // Reset button
+                        setTimeout(() => {
+                            copyImageBtn.innerHTML = '<i class="bi bi-clipboard"></i>Copy Image';
+                            copyImageBtn.disabled = false;
+                        }, 2000);
+                        
+                    }).catch(err => {
+                        console.error('Failed to copy to clipboard:', err);
+                        // Fallback: download the image
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = URL.createObjectURL(blob);
+                        downloadLink.download = 'monart-card.png';
+                        downloadLink.click();
+                        
+                        showNotification('Image copied to clipboard failed. Image downloaded instead.', 'warning');
+                        
+                        // Reset button
+                        setTimeout(() => {
+                            copyImageBtn.innerHTML = '<i class="bi bi-clipboard"></i>Copy Image';
+                            copyImageBtn.disabled = false;
+                        }, 2000);
+                        
+                        // Clean up
+                        setTimeout(() => {
+                            URL.revokeObjectURL(downloadLink.href);
+                        }, 1000);
+                    });
+                    
+                }, 'image/png');
+            }).catch(error => {
+                console.error('Screenshot error:', error);
+                showNotification('Failed to capture card image.', 'danger');
+                
+                // Reset button
+                copyImageBtn.innerHTML = '<i class="bi bi-clipboard"></i>Copy Image';
+                copyImageBtn.disabled = false;
             });
         }
     }
