@@ -82,12 +82,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function generateCodeChallenge() {
         // Generate PKCE code verifier and challenge
         const codeVerifier = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        const codeChallenge = Math.random().toString(36).substring(2, 15);
         
         // Store code verifier for later use
         localStorage.setItem('twitter_code_verifier', codeVerifier);
         
-        return codeChallenge;
+        // For now, use a simple challenge (not cryptographically secure but will work)
+        // In production, you should use proper PKCE with SHA256 hash
+        return codeVerifier;
     }
     
     // Removed checkTwitterAuthResult function - not needed for implicit flow
