@@ -592,10 +592,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     downloadLink.download = 'monart-card.png';
                     
                     // Download the image automatically
-                    downloadLink.click();
+                    //downloadLink.click();
                     
                     // Show success notification
-                    showNotification('Card image downloaded! Add it to your tweet manually.', 'success');
+                    //showNotification('Card image downloaded! Add it to your tweet manually.', 'success');
                     
                     // Prepare Twitter share URL with text
                     const tweetText = encodeURIComponent(`This is my Monart Card and I'm part of the Monad community! If you want to print your Monart Cards, do it now! https://monart.cards/\n\nMonad belongs to the people! @monad 💜\n\n📸`);
