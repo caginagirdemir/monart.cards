@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileImage = document.getElementById('profileImage');
     const username = document.getElementById('username');
     
+    // Check if all required elements exist
+    if (!twitterConnectBtn || !twitterProfile || !profileImage || !username) {
+        console.error('Required DOM elements not found. Please check HTML structure.');
+        return;
+    }
+    
     twitterConnectBtn.addEventListener('click', function() {
         // Real Twitter OAuth 2.0 flow
         initiateTwitterOAuth();
@@ -302,6 +308,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateTwitterProfile(userData) {
+        // Check if DOM elements exist before updating
+        if (!profileImage || !username || !twitterProfile || !twitterConnectBtn) {
+            console.error('Required DOM elements not found');
+            return;
+        }
+        
         // Update UI with user data
         profileImage.src = userData.profileImage;
         username.textContent = userData.displayName;
