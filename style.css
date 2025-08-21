@@ -256,7 +256,7 @@ html {
     left: 20px;
     top: 20px;
     font-size: 24px;
-    transform: rotate(-15deg);
+    /* transform: rotate(-15deg); */
 }
 
 .card-title {
